@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>SKAGRI – La plateforme agricole numérique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Achetez et vendez des produits agricoles, trouvez des intrants et gérez votre exploitation. Contact direct sur WhatsApp.">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{--bg:#f6faf3;--card:#fff;--tx:#17301c;--mu:#5b7060;--g:#2e7d32;--g2:#1f5c24;--y:#f9c823;--bd:#dbe7d6;--ok:#1f9d55}
+@media(prefers-color-scheme:dark){:root{--bg:#0f170e;--card:#182516;--tx:#e8f2e4;--mu:#9bb09b;--g:#5fbf65;--g2:#2e7d32;--bd:#2c3f2b}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,sans-serif}
+.w{max-width:900px;margin:auto;padding:0 16px}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:3px solid var(--y)}.top .w{display:flex;justify-content:space-between;align-items:center;height:56px}
+.logo{font-weight:800;font-size:20px;color:var(--g)}.lk{display:none}
+.btn{display:inline-block;text-align:center;text-decoration:none;background:var(--g);color:#fff;border:0;padding:11px 18px;border-radius:10px;font:600 15px system-ui;cursor:pointer}
+.btn.big{display:block;width:100%;padding:14px;font-size:16px}.btn.ok{background:var(--ok)}.btn.red{background:#b3261e}.btn.gh{background:none;color:var(--g);border:1.5px solid var(--g)}.btn.y{background:var(--y);color:#222}
+.hero{background:linear-gradient(135deg,var(--g),var(--g2));color:#fff;padding:36px 0 40px}.hero h1{font-size:30px;line-height:1.2;margin:0 0 10px}.hero p{margin:0 0 18px;opacity:.95}
+.sb{background:var(--card);border-radius:14px;padding:10px;display:grid;gap:8px;color:var(--tx)}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-radius:9px;background:var(--bg);color:var(--tx);font:inherit;margin:3px 0}
+section{padding:28px 0}h2{font-size:22px;margin:0 0 14px}
+.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.cat{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 6px;text-align:center;font-size:13px;color:var(--tx);cursor:pointer}.cat span{display:block;font-size:26px}
+.grid{display:grid;gap:12px}.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px}
+.mu{color:var(--mu);font-size:14px}.p{color:var(--g);font-weight:700}.tag{background:var(--y);color:#222;border-radius:6px;padding:2px 8px;font-size:12px}
+.step b.n{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;margin-bottom:6px}
+.band{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:22px;text-align:center}
+footer{border-top:1px solid var(--bd);padding:22px 0 30px;margin-top:20px}
+@media(min-width:700px){.cats{grid-template-columns:repeat(4,1fr)}.grid.g3{grid-template-columns:repeat(3,1fr)}.grid.g4{grid-template-columns:repeat(4,1fr)}.sb{grid-template-columns:2fr 1.2fr auto}.hero h1{font-size:40px}.lk{display:inline;margin-right:14px;color:var(--tx);text-decoration:none;font-size:15px}}
+</style></head><body>
+<div class="top"><div class="w"><span class="logo">🌱 SKAGRI</span><span><a class="lk" href="#res">Annonces</a><a class="lk" href="#farm">Mon exploitation</a><a class="lk" href="#plans">Tarifs</a><a class="btn" href="#pub">Publier une annonce</a></span></div></div>
+
+<div class="hero"><div class="w"><h1>Achetez, vendez et gérez votre activité agricole</h1><p>Céréales, semences, engrais, matériel, bétail et services : trouvez un vendeur ou un acheteur et contactez-le directement sur WhatsApp.</p>
+<div class="sb"><input id="q" placeholder="Que cherchez-vous ? (ex. maïs, engrais, tracteur)"><input id="fv" placeholder="Ville ou pays"><button class="btn" onclick="go()">Rechercher</button></div></div></div>
+
+<section><div class="w"><h2>Catégories</h2><div class="cats" id="cats"></div></div></section>
+<section id="res"><div class="w"><h2 id="rt">Annonces récentes</h2><div id="list" class="grid"><p class="mu">Chargement…</p></div></div></section>
+
+<section><div class="w"><h2>Comment ça marche</h2><div class="grid g3">
+<div class="card step"><b class="n">1</b><div style="font-weight:700">Cherchez</div><div class="mu">Tapez un produit et une ville, ou choisissez une catégorie.</div></div>
+<div class="card step"><b class="n">2</b><div style="font-weight:700">Contactez</div><div class="mu">Appuyez sur WhatsApp : le message est déjà prêt à envoyer.</div></div>
+<div class="card step"><b class="n">3</b><div style="font-weight:700">Concluez</div><div class="mu">Discutez du prix et de la livraison directement avec le vendeur.</div></div></div></div></section>
+
+<section><div class="w"><div class="band"><h2 style="margin-bottom:6px">Vous avez des produits à vendre ?</h2><p class="mu" style="margin:0 0 14px">Producteur, éleveur, fournisseur d’intrants ou vendeur de matériel : publiez votre annonce gratuitement.</p><a class="btn y" href="#pub">Publier mon annonce</a></div></div></section>
+
+<section id="pub"><div class="w"><h2>Publier une annonce</h2><div class="card" id="acc"></div></div></section>
+
+<section id="farm"><div class="w"><h2>Mon exploitation</h2><div class="card" id="fm"></div></div></section>
+
+<section id="plans"><div class="w"><h2>Tarifs</h2><div class="grid g4">
+<div class="card"><b>Gratuit</b><div class="p">0 FCFA / mois</div><div class="mu">Annonces, recherche, suivi de base.</div></div>
+<div class="card"><b>Basic</b><div class="p">2 000 FCFA / mois</div><div class="mu">Outils pour producteurs et petits vendeurs.</div></div>
+<div class="card"><b>Pro</b><div class="p">5 000 FCFA / mois</div><div class="mu">Gestion et commercialisation avancées.</div></div>
+<div class="card"><b>Entreprise</b><div class="p">15 000 FCFA / mois</div><div class="mu">Coopératives et organisations.</div></div></div>
+<p class="mu">Tarifs proposés, susceptibles de changer. Les formules payantes ne sont pas encore ouvertes : pour l’instant, tout est gratuit.</p></div></section>
+
+<section><div class="w"><h2>Pour votre sécurité</h2><div class="grid g3">
+<div class="card"><b>Vérifiez avant de payer</b><div class="mu">Ne payez jamais à l’avance un inconnu. Appelez ou rencontrez d’abord le vendeur.</div></div>
+<div class="card"><b>Vendeurs indépendants</b><div class="mu">SKAGRI met en relation mais ne garantit pas la qualité des produits.</div></div>
+<div class="card"><b>Produits autorisés</b><div class="mu">Ne publiez que des produits légaux et autorisés dans votre pays.</div></div></div></div></section>
+
+<footer><div class="w mu">© SKAGRI · Le numérique au service de l’agriculture mondiale<br>Les numéros publiés dans les annonces sont visibles par tous.</div></footer>
+
+<script>
+const sb=supabase.createClient("https://latnrvnlvavhxregyxwz.supabase.co","sb_publishable_kdcAyGBHTl1I_nFvk2h_6w_xb0C_8m8");
+const CATS=[["Céréales","🌽"],["Légumes et fruits","🥕"],["Légumineuses","🫘"],["Semences","🌱"],["Engrais et intrants","🧪"],["Matériel","🚜"],["Bétail","🐄"],["Services","🛠️"]];
+const ROLES=["Agriculteur / producteur","Éleveur","Acheteur / grossiste","Fournisseur d’intrants","Vendeur de matériel","Transporteur","Conseiller agricole","Coopérative / entreprise"];
+let me=null,L=[],E=[],P={},fc="";
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const g=id=>$("#"+id).value.trim(),fail=e=>alert("Erreur : "+(e.message||e));
+$("#cats").innerHTML=CATS.map(([c,e])=>`<button class="cat" onclick="pick('${c}')"><span>${e}</span>${c}</button>`).join("");
+$("#q").oninput=draw;$("#fv").oninput=draw;
+function pick(c){fc=c;draw();$("#res").scrollIntoView()}
+function go(){draw();$("#res").scrollIntoView()}
+function clr(){fc="";$("#q").value="";$("#fv").value="";draw()}
+function wa(i){const d=(i.contact||"").replace(/\D/g,"");if(!d)return"";const n=d.length==8?"226"+d:d;
+return `<a class="btn ok big" style="margin-top:10px" target="_blank" rel="noopener" href="https://wa.me/${n}?text=${encodeURIComponent("Bonjour, je suis intéressé par votre annonce SKAGRI : "+i.title)}">💬 Contacter sur WhatsApp</a>`}
+function draw(){const q=$("#q").value.toLowerCase(),fv=$("#fv").value.toLowerCase();
+const r=L.filter(i=>(!fc||i.cat==fc)&&(!q||(i.title+(i.descr||"")+i.cat).toLowerCase().includes(q))&&(!fv||((i.city||"")+" "+(i.country||"")).toLowerCase().includes(fv)));
+$("#rt").innerHTML=(fc||q||fv)?`Résultats (${r.length}) <button class="btn gh" style="padding:5px 12px;margin-left:8px" onclick="clr()">Effacer</button>`:"Annonces récentes";
+$("#list").className="grid"+(r.length>1?" g3":"");
+$("#list").innerHTML=r.length?r.map(i=>`<div class="card"><b>${esc(i.title)}</b><div class="p">${esc(i.price)}</div><div class="mu">${esc(i.cat)} · ${esc(i.city)}, ${esc(i.country)}</div>${i.descr?`<p class="mu">${esc(i.descr)}</p>`:""}${wa(i)}${me&&me.id==i.owner?`<button class="btn red big" style="margin-top:8px" onclick="rm(${i.id})">Supprimer mon annonce</button>`:""}</div>`).join(""):`<div class="card"><b>${L.length?"Aucun résultat":"Le site vient d’ouvrir"}</b><div class="mu">${L.length?"Essayez un autre mot ou une autre ville.":"Soyez parmi les premiers à publier une annonce."}</div><a class="btn" style="margin-top:10px" href="#pub">Publier mon annonce</a></div>`}
+function acc(){$("#acc").innerHTML=me?`<input id="t" placeholder="Titre (ex. Maïs blanc 5 tonnes)"><select id="c">${CATS.map(([c])=>`<option>${c}</option>`).join("")}</select><input id="pr" placeholder="Prix (ex. 2 000 FCFA/kg)"><input id="co" placeholder="Pays" value="Burkina Faso"><input id="ci" placeholder="Ville"><textarea id="d" rows="3" placeholder="Description, quantité, conditions"></textarea><input id="ct" placeholder="Numéro WhatsApp (ex. 70 12 34 56 ou +226 70 12 34 56)"><button class="btn big" style="margin-top:8px" onclick="pub()">Publier mon annonce</button><p class="mu">Connecté : ${esc(me.email)}</p><button class="btn gh" onclick="sb.auth.signOut()">Se déconnecter</button>`:
+`<p class="mu" style="margin-top:0">Créez un compte gratuit avec votre email pour publier et gérer votre exploitation.</p><input id="em" type="email" placeholder="Email"><input id="pw" type="password" placeholder="Mot de passe (6 caractères minimum)"><button class="btn big" style="margin-top:8px" onclick="login()">Se connecter</button><button class="btn gh big" style="margin-top:8px" onclick="signup()">Créer un compte</button>`}
+function farm(){if(!me){$("#fm").innerHTML=`<b>Suivez vos recettes, dépenses et votre marge</b><p class="mu">Un outil privé : seul vous voyez vos chiffres. Connectez-vous pour l’utiliser.</p><a class="btn" href="#pub">Se connecter</a>`;return}
+const s=k=>E.filter(e=>e.kind==k).reduce((a,e)=>a+(+e.amount||0),0),rec=s("Recette"),dep=s("Dépense");
+$("#fm").innerHTML=`<b>Mon profil</b><input id="pn" placeholder="Nom / exploitation" value="${esc(P.name)}"><select id="pr2">${ROLES.map(r=>`<option ${r==P.role?"selected":""}>${r}</option>`).join("")}</select><input id="pc" placeholder="Pays / région" value="${esc(P.place||"Burkina Faso")}"><button class="btn big" style="margin-top:8px" onclick="saveP()">Enregistrer le profil</button>
+<hr style="border:0;border-top:1px solid var(--bd);margin:16px 0"><b>Bilan</b><div>Recettes : <span class="p">${rec.toLocaleString("fr")} FCFA</span></div><div>Dépenses : ${dep.toLocaleString("fr")} FCFA</div><div>Marge : <b>${(rec-dep).toLocaleString("fr")} FCFA</b></div>
+<hr style="border:0;border-top:1px solid var(--bd);margin:16px 0"><b>Ajouter une ligne</b><select id="ek"><option>Dépense</option><option>Recette</option></select><input id="el" placeholder="Libellé (ex. achat engrais, vente maïs)"><input id="ea" type="number" placeholder="Montant en FCFA"><input id="ed" type="date"><button class="btn big" style="margin-top:8px" onclick="addE()">Ajouter</button>`+
+E.map(e=>`<div class="card" style="margin-top:10px"><b>${esc(e.label)}</b> <span class="tag">${esc(e.kind)}</span><div class="mu">${esc(e.date||"")} · ${(+e.amount||0).toLocaleString("fr")} FCFA</div><button class="btn red big" style="margin-top:8px" onclick="delE(${e.id})">Supprimer</button></div>`).join("")}
+async function load(){const r=await sb.from("listings").select("*").order("created_at",{ascending:false});L=r.data||[];
+if(me){const e=await sb.from("entries").select("*").order("created_at",{ascending:false});E=e.data||[];const p=await sb.from("profiles").select("*").eq("id",me.id).maybeSingle();P=p.data||{}}else{E=[];P={}}draw();farm()}
+async function pub(){if(!g("t")||!g("pr")||!g("ci"))return alert("Titre, prix et ville obligatoires.");
+const r=await sb.from("listings").insert({title:g("t"),cat:g("c"),price:g("pr"),country:g("co"),city:g("ci"),descr:g("d"),contact:g("ct")});if(r.error)return fail(r.error);alert("Annonce publiée !");acc();await load();$("#res").scrollIntoView()}
+async function rm(id){if(!confirm("Supprimer cette annonce ?"))return;const r=await sb.from("listings").delete().eq("id",id);if(r.error)return fail(r.error);load()}
+async function saveP(){const r=await sb.from("profiles").upsert({id:me.id,name:g("pn"),role:g("pr2"),place:g("pc")});if(r.error)return fail(r.error);alert("Profil enregistré");load()}
+async function addE(){if(!g("el")||g("ea")==="")return alert("Libellé et montant obligatoires.");const r=await sb.from("entries").insert({kind:g("ek"),label:g("el"),amount:+g("ea"),date:g("ed")||null});if(r.error)return fail(r.error);load()}
+async function delE(id){if(!confirm("Supprimer cette ligne ?"))return;const r=await sb.from("entries").delete().eq("id",id);if(r.error)return fail(r.error);load()}
+async function signup(){if(!g("em")||g("pw").length<6)return alert("Email et mot de passe (6 caractères min.) requis.");const r=await sb.auth.signUp({email:g("em"),password:g("pw")});if(r.error)return fail(r.error);alert("Compte créé. Si on vous demande de confirmer par email, ouvrez le lien reçu, puis connectez-vous.")}
+async function login(){const r=await sb.auth.signInWithPassword({email:g("em"),password:g("pw")});if(r.error)fail(r.error)}
+sb.auth.onAuthStateChange((ev,s)=>{me=s?s.user:null;setTimeout(()=>{acc();load()},0)});
+acc();load();
+</script></body></html>
